@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+
+    html, body {margin: 0; height: 100%; overflow: hidden}
+
+
+    .queue-current {
+        @apply text-white bg-green-600 w-screen m-0 h-1/3 shadow-xl content-center text-center items-center justify-center flex;
+    }
+    .queue-current-card {
+        @apply bg-lime-400 rounded-3xl 4xl:text-[14rem] 4xl:w-80 4xl:h-80 m-3 p-3 md:text-[11rem] md:w-60 md:h-60 text-white shadow-xl cursor-pointer select-none transition-all content-center;
+    }
+
+    .queue-screen {
+        @apply flex min-h-screen flex-col p-0 h-screen bg-slate-100;
+    }
+    .queue-top {
+        @apply text-green-500 text-9xl bg-green-600 w-screen m-0 h-1/3 shadow-xl flex flex-wrap content-center text-center p-20;
+    }
+
+    .queue-bottom {
+        @apply h-1/3 w-screen content-center text-center 4xl:p-20 md:p-14 flex flex-wrap;
+    }
+
+    .student-card {
+        @apply bg-lime-400 rounded-3xl 4xl:text-8xl 4xl:w-36 4xl:h-32 m-3 p-3 md:text-[4rem] md:w-28 md:h-24 text-white shadow-xl cursor-pointer select-none transition-all leading-none content-center;
+    }
+    .student-card-disabled {
+        @apply bg-gray-400 student-card animate-jump animate-once animate-duration-200 animate-ease-linear
+    }
+
+    .queue-card {
+        @apply student-card animate-jump-in animate-once animate-duration-500 animate-ease-in transition-all;
+    }
+
+    .queue-card:first-child {
+        -webkit-animation: move 1s ease-out;
+        animation: move 1s ease-out;
+    }
+    @keyframes move {
+        0% {
+            margin-left: 144px
+        }
+       100% {margin-left: 12px;}
+    }
+    
+    .menu {
+        @apply absolute m-4 right-0 w-16 h-16
+    }
+
+    .menu-icon {
+        @apply object-cover opacity-70
+    }
+    .menu-icon:hover {
+        @apply opacity-100 animate-infinite animate-wiggle
+    }
+
+    .menu-sidebar{
+        @apply w-96 absolute bg-white h-1/2 right-0 rounded-l-xl top-24 opacity-100 invisible z-50 shadow-2xl p-10;
+    }
+    .menu-sidebar.open{
+        @apply mr-0 visible;
+        animation: menu-open 0.5s ease-in
+    }
+    .menu-sidebar.close{
+        @apply animate-infinite visible;
+        animation: menu-close 0.5s ease-in forwards;
+    }
+    @keyframes menu-open {
+        0% {
+            right: -24rem
+        }
+       100% {
+            right:0;
+        }
+    }
+
+    @keyframes menu-close {
+        0% {
+            right: 0
+        }
+       100% {
+            right:-24rem;
+        }
+    }
+
+    
+
+}
