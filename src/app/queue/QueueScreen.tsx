@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import StudentList from "./StudentList";
 import QueueList from "./QueueList";
 import React from "react";
@@ -10,13 +10,19 @@ import OptionsMenu from "./optionsMenu";
 type Props = {}
 
 export type Student = {
-    id : number
+    id: number
     name: string
-    selected : boolean
+    selected: boolean
 }
 
 
-const QueueScreen: React.FC<Props> = ({}) => {
+const QueueScreen: React.FC<Props> = ({ }) => {
+
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [audioSource, setAudioSource] = useState<string>('')
+    const [volume, setVolume] = useState<number>(100)
+    const [voice, setVoice] = useState<string>("m")
+
     const noStudent: Student = {
         id: -1,
         name: '',
@@ -31,81 +37,136 @@ const QueueScreen: React.FC<Props> = ({}) => {
     const [students, setStudents] = useState<Student[]>([])
 
 
-    function onStudentClick(student:Student){
+    function onStudentClick(student: Student) {
 
-        if(student.selected)
+        if (student.selected)
             return;
 
-
         student.selected = true;
-        setQueue([...queue, student])
+        let nq = [...queue, student];
+        setQueue(nq)
+        saveQueue(nq);
 
+    }
+
+    function removeStudentFromQueue(student: Student) {
+        student.selected = false;
+        let nq = queue.filter(s => s !== student)
+        setQueue(nq)
+        saveQueue(nq);
     }
 
     const removeQueueFirst = () => {
 
         currentStudent.selected = false;
-        if(queue.length == 0)
-        {
+        if (queue.length == 0) {
             setCurrentStudent(noStudent);
+            saveCurrentStudent(noStudent)
             return;
         }
-        
+
         setCurrentStudent(queue[0])
-        setQueue(queue.slice(1))
+        saveCurrentStudent(queue[0])
+
+        let sound = "/sounds/numbers/" + voice + "_" + queue[0].id + ".wav";
+        setAudioSource(sound);
+
+
+        let nq = queue.slice(1)
+        setQueue(nq)
+        saveQueue(nq);
     }
 
+    React.useEffect(() => {
+        if (audioRef.current?.src != "http://localhost:3000/queue")
+            audioRef.current?.play();
+    }, [audioSource])
 
-    const handleUserKeyPress = useCallback((ev:KeyboardEvent) => {
-        if(ev.key == " "){
+    const handleUserKeyPress = useCallback((ev: KeyboardEvent) => {
+        if (ev.key == " ") {
             removeQueueFirst();
         }
     }, [removeQueueFirst]);
 
-    
+
 
     React.useEffect(() => {
         window.addEventListener('keydown', handleUserKeyPress)
 
         return () => {
-          window.removeEventListener('keydown', handleUserKeyPress)
+            window.removeEventListener('keydown', handleUserKeyPress)
         }
 
-      }, [handleUserKeyPress])
-  
+    }, [handleUserKeyPress])
+
     React.useEffect(() => {
 
         generateStudents();
 
-    },[studentCount])
+    }, [studentCount])
 
-    function generateStudents(){
-        let st:Student[] = [];
+    React.useEffect(() => {
+        if (audioRef.current != null)
+            audioRef.current.volume = volume / 100;
+    }, [volume])
+
+
+    function generateStudents() {
+
+        let loadedQueue: Student[] = JSON.parse(localStorage.getItem("queue") || "[]");
+        let loadedCurrentStudent: Student = JSON.parse(localStorage.getItem("currentStudent") || "null");
+        setQueue(loadedQueue)
+        let st: Student[] = [];
         for (let index = 0; index < studentCount; index++) {
             const element = [index];
-            st.push({id:index+1, name:"", selected: false})
+
+            let s = loadedQueue.find(s => s.id == index + 1)
+            if (loadedCurrentStudent != null && loadedCurrentStudent.id == index + 1) {
+                st.push(loadedCurrentStudent)
+                setCurrentStudent(loadedCurrentStudent)
+            }
+            else if (s !== undefined) {
+                s.selected = true;
+                st.push(s);
+            }
+            else {
+                st.push({ id: index + 1, name: "", selected: false })
+            }
+
+
         }
         setStudents(st)
 
     }
 
-    
+    function saveQueue(newQueue: Student[]) {
+        let q: string = JSON.stringify(newQueue);
+        localStorage.setItem("queue", q);
+    }
+
+    function saveCurrentStudent(student: Student) {
+        let s: string = JSON.stringify(student);
+        localStorage.setItem("currentStudent", s);
+    }
+
+
+
 
     return (
         <main className="queue-screen">
 
-            
-            <OptionsMenu setStudentCount={setStudentCount}/>
+            <audio ref={audioRef} src={audioSource} />
+            <OptionsMenu setStudentCount={setStudentCount} setVolume={setVolume} setVoice={setVoice} />
 
             <div className="queue-current">
                 <div className="queue-current-card">
                     {currentStudent.id == -1 ? '...' : currentStudent.id}
                 </div>
             </div>
-    
-            <QueueList queueList={queue}/>
-            <StudentList studentList={students} onStudentClick={onStudentClick}/>
-        
+
+            <QueueList queueList={queue} removeStudentFromQueue={removeStudentFromQueue} />
+            <StudentList studentList={students} onStudentClick={onStudentClick} />
+
         </main>
     )
 }

@@ -7,12 +7,41 @@
 
     html, body {margin: 0; height: 100%; overflow: hidden}
 
+    @media (min-width: 500px) {
+        html{
+            font-size: 8px;
+        }
+    }
+    @media (min-width: 700px) {
+        html{
+            font-size: 10px;
+        }
+    }
+    @media (min-width: 1400px) {
+        html{
+            font-size: 10px;
+        }
+    }
+    @media (min-width: 1800px) {
+        html{
+            font-size: 12px;
+        }
+    }
+    @media (min-width: 2000px) {
+        html{
+            font-size: 16px;
+        }
+    }
+    
+    
+    
+
 
     .queue-current {
         @apply text-white bg-content2 w-screen m-0 h-1/3 shadow-xl content-center text-center items-center justify-center flex;
     }
     .queue-current-card {
-        @apply bg-primary rounded-3xl 4xl:text-[14rem] 4xl:w-80 4xl:h-72 m-3 p-3 md:text-[11rem] md:w-60 md:h-60  shadow-xl cursor-pointer select-none transition-all content-center;
+        @apply bg-primary rounded-3xl text-[14rem] w-80 h-72 m-3 p-3 shadow-xl cursor-pointer select-none transition-all content-center;
     }
 
     .queue-screen {
@@ -23,18 +52,23 @@
     }
 
     .queue-bottom {
-        @apply  bg-content1 h-1/3 w-screen content-center text-center 4xl:p-20 md:p-14 flex flex-wrap justify-center;
+        @apply  bg-content1 h-1/3 w-screen content-center text-center p-20  flex flex-wrap justify-center;
     }
 
     .student-card {
-        @apply text-white bg-primary rounded-3xl 4xl:text-7xl 4xl:w-32 4xl:h-28 m-3 p-3 md:text-[4rem] md:w-24 md:h-20  shadow-xl cursor-pointer select-none transition-all leading-none content-center;
+        @apply text-white bg-primary rounded-3xl text-7xl w-32 h-28 m-3 p-3 shadow-xl cursor-pointer select-none transition-all leading-none content-center;
     }
     .student-card-disabled {
         @apply bg-default student-card animate-jump animate-once animate-duration-200 animate-ease-linear
     }
 
     .queue-card {
-        @apply student-card animate-jump-in animate-once animate-duration-500 animate-ease-in transition-all;
+        @apply student-card animate-jump-in animate-once animate-duration-500 animate-ease-in transition-all cursor-default;
+    }
+
+    .delete-card{
+        @apply absolute ml-24 -mt-12 text-danger text-[3rem] cursor-pointer invisible group-hover:visible font-bold animate-wiggle animate-infinite
+
     }
 
     .queue-card:first-child {
@@ -49,10 +83,11 @@
     }
     
     .menu {
-        @apply absolute m-4 right-0 w-16 h-16
+        @apply absolute right-0 m-4 w-16 h-16
     }
 
     .menu-icon {
+        mix-blend-mode: difference;
         @apply object-cover opacity-70
     }
     .menu-icon:hover {
@@ -60,7 +95,7 @@
     }
 
     .menu-sidebar{
-        @apply w-96 absolute bg-content1 right-0 rounded-l-xl top-24 opacity-100 invisible z-50 shadow-2xl p-10;
+        @apply absolute bg-content1 right-0 rounded-l-xl opacity-100 invisible z-50 shadow-2xl p-10 w-96 top-24;
     }
     .menu-sidebar.open{
         @apply mr-0 visible;
